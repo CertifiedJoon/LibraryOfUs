@@ -2,6 +2,37 @@
     padding-top: 70px;
     padding-bottom: 70px;
 }
+
+.cut-text { 
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  width: 50em; 
+  height: 1.2em; 
+  white-space: nowrap;
+}
+
+p {
+  padding-left: 3rem;
+}
+
+.postTitle {
+  border-radius: 0.3em;
+  padding: 0em 0.4em;
+  font-size: 30px;
+}
+
+.postTitle:link, .postTitle:visited{
+  color: #1abc9c;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+.postTitle:hover, .postTitle:active{
+  color: white;
+  background-color: #1abc9c;
+  text-decoration: none;
+}
+
 .navbar {
     padding-top: 15px;
     padding-bottom: 15px;

@@ -46,11 +46,9 @@ app.post("/compose", function(req, res) {
 app.get("/posts/:topic", function(req, res) {
   for (var i = 0; i < posts.length; ++i) {
     if (_.camelCase(posts[i].title) == _.camelCase(req.params.topic))
-      console.log("match found");
+      res.render("post", {postTitle:posts[i].title, postText:posts[i].text});
   }
 });
-
-
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
