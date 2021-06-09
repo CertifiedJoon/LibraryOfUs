@@ -3,10 +3,30 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const mongoose = require("mongoose");
 var _ = require("lodash");
 const app = express();
 
-let posts = [];
+app.set('view engine', 'ejs');
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("public"));
+
+mongoose.connect("mongodb://goorm:27017/blog", {useNewUrlParser: true});
+
+const postSchema = {
+  title: String,
+  content: String
+}
+
+const Post = mongoose.model("Post", postSchema);
+
+const post1 = new Post({
+  title: "hello",
+  content: "world"
+})
+
+post1.save()
 
 app.set('view engine', 'ejs');
 
