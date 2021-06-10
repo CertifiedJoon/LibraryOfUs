@@ -12,21 +12,14 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://goorm:27017/blog", {useNewUrlParser: true});
+mongoose.connect("mongodb://127.0.0.1:27017/blogDB", {useNewUrlParser: true, useUnifiedTopology: true});
 
-const postSchema = {
+const postSchema = new mongoose.Schema ({
   title: String,
-  content: String
-}
+  text: String
+});
 
 const Post = mongoose.model("Post", postSchema);
-
-const post1 = new Post({
-  title: "hello",
-  content: "world"
-})
-
-post1.save()
 
 app.set('view engine', 'ejs');
 
@@ -34,7 +27,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 app.get("/", function(req,res) {
-  res.render("home", {posts: posts});
+  Post.find({}, function(err, foundPosts) {
+      res.render("home", {posts:foundPosts})
+  }); 
 });
 
 app.get("/contact", function(req, res) {
@@ -50,20 +45,23 @@ app.get("/compose", function(req, res) {
 });
 
 app.post("/compose", function(req, res) {
-  const post = {
+  const new_post = new Post({
     title: req.body.postTitle,
     text: req.body.postText
-  };
+  });
   
-  posts.push(post);
+  new_post.save();
+
   res.redirect("/");
 });
 
 app.get("/posts/:topic", function(req, res) {
-  for (var i = 0; i < posts.length; ++i) {
-    if (_.camelCase(posts[i].title) == _.camelCase(req.params.topic))
-      res.render("post", {postTitle:posts[i].title, postText:posts[i].text});
-  }
+  Post.find({}, function(err, PostsFound) {
+    PostsFound.forEach(function(post) {
+      if(_.camelCase(post.title) == _.camelCase(req.params.topic))
+        res.render("post", {postTitle:post.title, postText:post.text});
+    });
+  });
 });
 
 app.listen(3000, function() {
