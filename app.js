@@ -33,16 +33,17 @@ app.get("/", function(req,res) {
 });
 
 app.get("/contact", function(req, res) {
-  res.render("contact", {contactContent: contactContent});
+  res.render("contact");
 });
 
 app.get("/about", function(req, res) {
-  res.render("about", {aboutContent: aboutContent});
+  res.render("about");
 });
 
 app.get("/compose", function(req, res) {
   res.render("compose");
 });
+
 
 app.post("/compose", function(req, res) {
   const new_post = new Post({
