@@ -14,6 +14,12 @@ app.use(express.static("public"));
 
 mongoose.connect("mongodb://127.0.0.1:27017/blogDB", {useNewUrlParser: true, useUnifiedTopology: true});
 
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("public"));
+
+
+// data base schemas
 const postSchema = new mongoose.Schema ({
   title: String,
   text: String
@@ -21,10 +27,13 @@ const postSchema = new mongoose.Schema ({
 
 const Post = mongoose.model("Post", postSchema);
 
-app.set('view engine', 'ejs');
+const userSchema = new mongoose.Schema ( {
+  id : String,
+  pw : String,
+})
 
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static("public"));
+
+// base interfaces
 
 app.get("/", function(req,res) {
   Post.find({}, function(err, foundPosts) {
@@ -39,6 +48,10 @@ app.get("/contact", function(req, res) {
 app.get("/about", function(req, res) {
   res.render("about");
 });
+
+
+
+// compose
 
 app.get("/compose", function(req, res) {
   res.render("compose");
@@ -56,9 +69,38 @@ app.post("/compose", function(req, res) {
   res.redirect("/");
 });
 
+
+
+// authentication semantics
+
 app.get("/authenticate", function(req, res) {
+  res.render("/authenticate");
+})
+
+app.post("/authenticate", function(req, res) {
+  const id = req.body.id;
+  const pw = req.body.pw;
+})
+
+app.get("/register", function(req, res) {
+  res.render("/register");
+})
+
+app.post("/register", function(req, res) {
+  const id = req.body.id;
+  const pw = req.body.pw;
+  const confirm = req.body.confirm;
+  
+  if (pw != confirm) {
+    alert("Confirm your password again.");
+    res.redirect("/register");
+  }
+  
   
 })
+
+
+// Dynamic Post viewer.
 
 app.get("/posts/:topic", function(req, res) {
   Post.find({}, function(err, PostsFound) {
@@ -69,6 +111,15 @@ app.get("/posts/:topic", function(req, res) {
   });
 });
 
+
+// set Port
 app.listen(3000, function() {
   console.log("Server started on port 3000");
 });
+
+
+
+
+
+
+
