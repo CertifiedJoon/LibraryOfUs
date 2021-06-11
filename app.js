@@ -56,6 +56,10 @@ app.post("/compose", function(req, res) {
   res.redirect("/");
 });
 
+app.get("/authenticate", function(req, res) {
+  
+})
+
 app.get("/posts/:topic", function(req, res) {
   Post.find({}, function(err, PostsFound) {
     PostsFound.forEach(function(post) {
