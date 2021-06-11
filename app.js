@@ -6,6 +6,7 @@ const ejs = require("ejs");
 const mongoose = require("mongoose");
 var _ = require("lodash");
 const app = express();
+var encrypt = require("mongoose-encryption");
 
 app.set('view engine', 'ejs');
 
@@ -28,15 +29,18 @@ const Post = mongoose.model("Post", postSchema);
 
 const userSchema = new mongoose.Schema ( {
   id : String,
-  pw : String,
-})
+  pw : String
+});
 const User = mongoose.model("User", userSchema);
+
+const secret="YouWillNeverWalkAlone";
+userSchema.plugin(encrypt, {secret:secret, encryptedFields:["pw"] });
 
 // base interfaces
 
 app.get("/", function(req,res) {
   Post.find({}, function(err, foundPosts) {
-      res.render("home", {posts:foundPosts})
+      res.render("home", {posts:foundPosts});
   }); 
 });
 
@@ -53,8 +57,7 @@ app.get("/about", function(req, res) {
 // compose
 
 app.get("/compose", function(req, res) {
-  res.redirect("/authenticate");
-  // res.render("compose");
+  res.render("compose");
 });
 
 
@@ -70,11 +73,10 @@ app.post("/compose", function(req, res) {
 });
 
 
-
 // authentication semantics
 
 app.get("/authenticate", function(req, res) {
-  res.render("/authenticate");
+  res.render("authenticate");
 })
 
 app.post("/authenticate", function(req, res) {
@@ -82,22 +84,20 @@ app.post("/authenticate", function(req, res) {
   const pw = req.body.pw;
   
   User.find({id:id}, function(err, foundUser) {
-    if (foundUser.length == 0) {
-      alert("Invalid Id");
-      res.redirect("/authenticate");
+    if (err) {
+      console.log(err);
     }
     if (foundUser.pw != pw) {
-      alert("Incorrect PassWord");
       res.redirect("/authenticate");
     }
   });
   
-  res.render("compose");
-})
+  res.redirect("/compose");
+});
 
 app.get("/register", function(req, res) {
-  res.render("/register");
-})
+  res.render("register");
+});
 
 app.post("/register", function(req, res) {
   const id = req.body.id;
@@ -105,7 +105,6 @@ app.post("/register", function(req, res) {
   const confirm = req.body.confirm;
   
   if (pw != confirm) {
-    alert("Confirm your password again.");
     res.redirect("/register");
   }
   
@@ -117,7 +116,7 @@ app.post("/register", function(req, res) {
   newUser.save();
   
   res.redirect("/authenticate");
-})
+});
 
 
 // Dynamic Post viewer.

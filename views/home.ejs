@@ -3,6 +3,6 @@
 <% posts.forEach(function(post) { %>
    <h1> <a class="postTitle" href="/posts/<%= post.title %>"> <%= post.title %> </a> </h1>
    <p class="cut-text"> <%= post.text %></p>
-<% } )%>
+<% });%>
 
 <%-include('partials/footer'); -%>
