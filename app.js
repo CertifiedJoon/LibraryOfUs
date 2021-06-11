@@ -24,14 +24,13 @@ const postSchema = new mongoose.Schema ({
   title: String,
   text: String
 });
-
 const Post = mongoose.model("Post", postSchema);
 
 const userSchema = new mongoose.Schema ( {
   id : String,
   pw : String,
 })
-
+const User = mongoose.model("User", userSchema);
 
 // base interfaces
 
@@ -54,7 +53,8 @@ app.get("/about", function(req, res) {
 // compose
 
 app.get("/compose", function(req, res) {
-  res.render("compose");
+  res.redirect("/authenticate");
+  // res.render("compose");
 });
 
 
@@ -80,6 +80,19 @@ app.get("/authenticate", function(req, res) {
 app.post("/authenticate", function(req, res) {
   const id = req.body.id;
   const pw = req.body.pw;
+  
+  User.find({id:id}, function(err, foundUser) {
+    if (foundUser.length == 0) {
+      alert("Invalid Id");
+      res.redirect("/authenticate");
+    }
+    if (foundUser.pw != pw) {
+      alert("Incorrect PassWord");
+      res.redirect("/authenticate");
+    }
+  });
+  
+  res.render("compose");
 })
 
 app.get("/register", function(req, res) {
@@ -96,7 +109,14 @@ app.post("/register", function(req, res) {
     res.redirect("/register");
   }
   
+  const newUser = new User({
+    id:id, 
+    pw:pw
+  });
   
+  newUser.save();
+  
+  res.redirect("/authenticate");
 })
 
 
